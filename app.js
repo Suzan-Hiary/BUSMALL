@@ -1,4 +1,7 @@
 'use strict';
+let productname = [];
+let Shown = [];
+let clicked = [];
 
 let totalClicks = 0;
 let maxClicks = 25;
@@ -40,6 +43,7 @@ function makeThreeImages() {
             let linkedImage = document.getElementById('image-' + i);
             linkedImage.setAttribute('src', Items[indexNum].Path);
             linkedImage.setAttribute('itemIdx', indexNum);
+
         }
     }
     //assign lastRound to thisRound so current set of numbers is reserved
@@ -68,49 +72,47 @@ function onClick(event) {
             image.removeEventListener('click', onClick);
         }
 
-        let list = document.getElementById('list');
+        //let list = document.getElementById('list');
         for (let j = 0; j < Items.length; j++) {
-            let li = document.createElement('li');
-            li.innerText = Items[j].name + ' was clicked ' + Items[j].timesClicked + ' times out of ' + Items[j].timeShown;
-            list.appendChild(li);
+            //let li = document.createElement('li');
+            //li.innerText = Items[j].name + ' was clicked ' + Items[j].timesClicked + ' times out of ' + Items[j].timeShown;
+            //list.appendChild(li);
+            productname.push(Items[j].name);
+            Shown.push(Items[j].timeShown);
+            clicked.push(Items[j].timesClicked);
+            drawchart();
+
         }
+
     }
-}
 
-function drawchart() {
-    let name = [];
-  let Shown = [];
-  let clicked=[];
-
-  for(let i = 0; i < Items.length; i++) {
-    name.push(Items[i].name);
-    Shown.push(Items[i].timeShown);
-    clicked.push(Items[i].timesClicked);
-  }
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: name,
-            datasets: [{
-                label: '# of Votes',
-                data:Shown ,
-                backgroundColor : 'rgba(255, 99, 132, 0.2)',
-                borderColor:
-                    'rgba(255, 99, 132, 1)',
-                borderWidth: 5
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                },
-                x:{
-                    beginAtZero: true,
-                }
-            }
-        }
-    })
 };
-drawchart()
+
+
+async function drawchart() {
+    await makeThreeImages();
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var mixedChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            datasets: [{
+                backgroundColor: '#FF0000',
+                label: 'clicked Times',
+                data: clicked,
+                // this dataset is drawn below
+                order: 2
+            }, {
+                backgroundColor: '#000080',
+                label: 'Shown Times',
+                data: Shown,
+                type: 'bar',
+
+                // this dataset is drawn on top
+                order: 1
+            }],
+            labels: productname,
+        },
+    });
+};
+
+
