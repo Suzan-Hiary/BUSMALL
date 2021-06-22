@@ -12,13 +12,21 @@ function Proudct(name, Path, id) {
     this.id = id;
     this.timeShown = 0;
     this.timesClicked = 0;
+
     Items.push(this);
+
+
 }
+
 let Items = [];
+let storedpro = JSON.stringify(Items);
+
 
 let names = ['bag', 'banana', 'bathroom', 'boots', 'breakfast', 'bubblegum', 'chair', 'cthulhu', 'dog-duck', 'dragon', 'pen', 'pet-sweep', 'scissors', 'shark', 'sweep', 'tauntaun', 'unicorn', 'usb', 'water-can', 'wine-glass'];
 let paths = ['images/bag.jpg', 'images/banana.jpg', 'images/bathroom.jpg', 'images/boots.jpg', 'images/breakfast.jpg', 'images/bubblegum.jpg', 'images/chair.jpg', 'images/cthulhu.jpg', 'images/dog-duck.jpg', 'images/dragon.jpg', 'images/pen.jpg', 'images/pet-sweep.jpg', 'images/scissors.jpg', 'images/shark.jpg', 'images/sweep.png', 'images/tauntaun.jpg', 'images/unicorn.jpg', 'images/usb.gif', 'images/water-can.jpg', 'images/wine-glass.jpg'];
 let ids = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.png', 'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
+
+
 
 function createItems() {
     for (let i = 0; i < names.length; i++) {
@@ -59,36 +67,44 @@ for (let i = 0; i < document.getElementsByClassName('clickable').length; i++) {
 }
 
 //let itemClicks = [];
-
+localStorage.setItem('Items', JSON.stringify(Items));
 function onClick(event) {
     let itemIdx = parseInt(event.target.getAttribute('itemIdx'));
     let itemIWant = Items[itemIdx];
     itemIWant.timesClicked++;
+
     makeThreeImages();
     totalClicks++;
+
     if (totalClicks === maxClicks) {
         for (let i = 0; i < document.getElementsByClassName('clickable').length; i++) {
             let image = document.getElementById('image-' + (i + 1));
             image.removeEventListener('click', onClick);
+
         }
 
-        //let list = document.getElementById('list');
+
         for (let j = 0; j < Items.length; j++) {
-            //let li = document.createElement('li');
-            //li.innerText = Items[j].name + ' was clicked ' + Items[j].timesClicked + ' times out of ' + Items[j].timeShown;
-            //list.appendChild(li);
+            let votes = [];
+            let li = document.createElement('li');
+            li.innerText = Items[j].name + ' was clicked ' + Items[j].timesClicked + ' times out of ' + Items[j].timeShown;
+            list.appendChild(li);
             productname.push(Items[j].name);
             Shown.push(Items[j].timeShown);
             clicked.push(Items[j].timesClicked);
-            drawchart();
 
+            counter();
+            drawchart();
         }
+
 
     }
 
+
+
 };
 
-
+console.log(Items);
 async function drawchart() {
     await makeThreeImages();
     var ctx = document.getElementById('myChart').getContext('2d');
@@ -115,4 +131,23 @@ async function drawchart() {
     });
 };
 
+function counter() {
+    let preclicked = [];
+    let preshown = [];
 
+    const productVotes = JSON.parse(localStorage.getItem('Items'));
+    //console.log(productVotes.timeShown);
+
+    let section = document.getElementById('section');
+    let paraghraph = document.createElement('p');
+    section.appendChild(paraghraph);
+
+    let totalclicked = clicked + preclicked;
+    let totalshown = Shown + preshown;
+    localStorage.setItem("clicked", totalclicked);
+    localStorage.setItem("Shown", totalshown);
+    preclicked.push(clicked);
+    preshown.push(Shown);
+
+  
+}
